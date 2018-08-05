@@ -12,9 +12,6 @@ MongoClient.connect(dbPath, (error, db) => {
     // db.collection('Todos').deleteMany({text: 'Eat lunch'}).then((result) => {
     //     console.log(result);
     // });
-    db.collection('Users').deleteMany({name: 'Sean Atkinson'}).then((result) => {
-        console.log(result);
-    });
 
     // deleteOne
     // db.collection('Todos').deleteOne({text: 'Eat lunch'}).then((result) => {
@@ -25,9 +22,15 @@ MongoClient.connect(dbPath, (error, db) => {
     // db.collection('Todos').findOneAndDelete({completed: false}).then((result) => {
     //     console.log(result);
     // });
-    db.collection('Users').findOneAndDelete({_id: new ObjectID('5b60c7dfccea69c2b18d9875')}).then((result) => {
-        console.log(result);
-    });
+
+    // challenge
+    // db.collection('Users').deleteMany({name: 'Sean Atkinson'}).then((result) => {
+    //     console.log(result);
+    // });
+    //
+    // db.collection('Users').findOneAndDelete({_id: new ObjectID('5b60c7dfccea69c2b18d9875')}).then((result) => {
+    //     console.log(result);
+    // });
 
     // db.close();
 });
