@@ -27,7 +27,12 @@ app.post('/todos', (req, res) => {
 
 // get all todos
 app.get('/todos', (req, res) => {
-    console.log('Getting all todos')
+    Todo.find().then((todos) => {
+        res.send({todos});
+    }, (err) => {
+        res.status(400);
+        res.send(e);
+    })
 })
 
 app.listen(3000, () => {
