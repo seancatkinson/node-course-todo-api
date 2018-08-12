@@ -32,11 +32,11 @@ app.get('/todos', (req, res) => {
     }, (err) => {
         res.status(400);
         res.send(e);
-    })
-})
+    });
+});
 
 app.listen(3000, () => {
     console.log('Started on port 3000');
-})
+});
 
 module.exports = {app};
