@@ -11,6 +11,11 @@ const todos = [{
 }, {
     _id: new ObjectID(),
     text: 'Second test todo'
+}, {
+    _id: new ObjectID(),
+    text: 'Third test todo',
+    completed: true,
+    completedAt: 333
 }];
 
 beforeEach((done) => {
@@ -54,7 +59,7 @@ describe('POST /todos', () => {
                 }
 
                 Todo.find().then((todos) => {
-                    expect(todos.length).toBe(2);
+                    expect(todos.length).toBe(3);
                     done();
                 }).catch((e) => done(e));
             });
@@ -67,7 +72,7 @@ describe('GET /todos', () => {
             .get('/todos')
             .expect(200)
             .expect((res) => {
-                expect(res.body.todos.length).toBe(2);
+                expect(res.body.todos.length).toBe(3);
             })
             .end(done);
     });
@@ -133,6 +138,97 @@ describe('DELETE /todos/:id', () => {
         const unusedObjectID = new ObjectID()
         request(app)
             .delete(`/todos/${unusedObjectID.toHexString()}`)
+            .expect(404)
+            .end(done);
+    });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should update todo doc text', (done) => {
+        const idUnderTest = todos[0]._id.toHexString();
+        const todoText = todos[0].text;
+        const text = 'The updated text from the test';
+
+        request(app)
+            .patch(`/todos/${idUnderTest}`)
+            .send({text})
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+            })
+            .end((err, res) => {
+                if (err != undefined) {
+                    return done(err);
+                }
+
+                Todo.findById(idUnderTest).then((todo) => {
+                    expect(todo.text).toBe(text);
+                    done();
+                }).catch((e) => done(e));
+            });
+    });
+
+    it('should add a completedAt when todo completed set to true', (done) => {
+        const idUnderTest = todos[0]._id.toHexString();
+
+        request(app)
+            .patch(`/todos/${idUnderTest}`)
+            .send({completed:true})
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.completedAt).toNotBe(null);
+                expect(typeof res.body.todo.completedAt).toBe('number');
+            })
+            .end((err, res) => {
+                if (err != undefined) {
+                    return done(err);
+                }
+
+                Todo.findById(idUnderTest).then((todo) => {
+                    expect(todo.completed).toBe(true);
+                    expect(todo.completedAt).toNotBe(null);
+                    expect(typeof todo.completedAt).toBe('number');
+                    done();
+                }).catch((e) => done(e));
+            });
+    });
+
+    it('should set completedAt to null when todo completed set to false', (done) => {
+        const idUnderTest = todos[2]._id.toHexString();
+
+        request(app)
+            .patch(`/todos/${idUnderTest}`)
+            .send({completed:false})
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedAt).toBe(null);
+            })
+            .end((err, res) => {
+                if (err != undefined) {
+                    return done(err);
+                }
+
+                Todo.findById(idUnderTest).then((todo) => {
+                    expect(todo.completed).toBe(false);
+                    expect(todo.completedAt).toBe(null);
+                    done();
+                }).catch((e) => done(e));
+            });
+    })
+
+    it('should return a 404 if sent an invalid Object ID', (done) => {
+        request(app)
+            .patch('/todos/123')
+            .expect(404)
+            .end(done);
+    });
+
+    it ('should return a 404 if Todo not found for valid ObjectID', (done) => {
+        const unusedObjectID = new ObjectID()
+        request(app)
+            .patch(`/todos/${unusedObjectID.toHexString()}`)
             .expect(404)
             .end(done);
     });
