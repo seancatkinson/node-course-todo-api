@@ -2,6 +2,7 @@ const {ObjectID} = require('mongodb');
 
 const {mongoose} = require('./../server/db/mongoose');
 const {Todo} = require('./../server/models/todo');
+const {User} = require('./../server/models/user');
 
 // const id = '5b7065b9161e7dd535fc1246';
 // const id = '6b7065b9161e7dd535fc1246'; // unused ID
@@ -31,7 +32,7 @@ const id = '5b7065b9161e7dd535fc124611'; // invalid id
 // });
 
 
-const {User} = require('./../server/models/user');
+
 
 const userID = '5b675613f710b6e73dc2a2c9';
 if (ObjectID.isValid(userID) == false) {
